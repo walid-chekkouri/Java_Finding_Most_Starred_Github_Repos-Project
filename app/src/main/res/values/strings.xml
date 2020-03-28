@@ -1,0 +1,10 @@
+<resources>
+    <!-- Name of our app [CHAR LIMIT=NONE]-->
+    <string name="app_name">Most Starred Github Repos</string>
+
+    <!-- Error message when there is no internet connectivity [CHAR LIMIT=NONE] -->
+    <string name="no_internet_connection">No internet connection.</string>
+
+    <!-- Text to display in the list when there are no repos found [CHAR LIMIT=NONE] -->
+    <string name="no_repos">No repos found.</string>
+</resources>

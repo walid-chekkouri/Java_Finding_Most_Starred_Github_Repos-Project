@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/repo_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Repo Name"
+            android:textColor="@color/repo_name_text_color"
+            android:textSize="@dimen/large_text"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/repo_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Repo Description"
+            android:textColor="@color/repo_description_text_color"
+            android:textSize="@dimen/medium_text"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+
+            <ImageView
+                android:id="@+id/star_image"
+                android:layout_width="@dimen/star_image_size"
+                android:layout_height="@dimen/star_image_size"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_star"
+                android:layout_toLeftOf="@+id/repo_stargazers"
+                />
+
+            <TextView
+                android:id="@+id/repo_stargazers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number Of Stars"
+                android:textColor="@color/repo_stars_text_color"
+                android:textSize="@dimen/medium_text"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="20dp"/>
+
+            <ImageView
+                android:id="@+id/owner_avatar_image"
+                android:layout_width="@dimen/avatar_image_size"
+                android:layout_height="@dimen/avatar_image_size"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_launcher_background" />
+
+            <TextView
+                android:id="@+id/owner_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Owner Name"
+                android:textColor="@color/owner_name_text_color"
+                android:textSize="@dimen/medium_text"
+                android:textStyle="bold"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/owner_avatar_image"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

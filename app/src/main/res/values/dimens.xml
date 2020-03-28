@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="large_text">20sp</dimen>
+    <dimen name="medium_text">15sp</dimen>
+
+    <dimen name="avatar_image_size">40dp</dimen>
+    <dimen name="star_image_size">20dp</dimen>
+
+</resources>
