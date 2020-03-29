@@ -7,11 +7,12 @@ Fetching the sorted JSON data directly from the Github API.
 
 - Listing the most starred Github repos that were created in the last 30 days.
 - The results are displayed as a list. One repository per row.
-- For each repo/row have the following details :
-- Repository name
-- Repository description
-- Numbers of stars for the repo.
-- Username and avatar of the owner.
+- For each repo/row have the following details 👍 
+    1. - Repository name
+    2. - Repository description
+    3. - Numbers of stars for the repo.
+    4. - Username and avatar of the owner.
+- Pagination support through endless scrolling, fetching new JSON data (scrolling both up and down)
 
 we get the data by calling the following endpoint 
 https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc
