@@ -1,22 +1,18 @@
 package com.example.moststarredgithubrepos_challenge;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import com.android.volley.RequestQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,27 +23,76 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     private TextView mEmptyStateTextView;
+    private View mLoadingIndicator;
+
+    private RecyclerView mRecyclerView;
     private RepoAdapter mRepoAdapter;
-    View mLoadingIndicator;
-    private static final String MY_URL_STRING = "https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc";
+    private ArrayList<Repo> mRepos;
+
+    // Store a member variable for the listener
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private LoaderManager mLoaderManager;
+
+    private int mPage=1;
+    private static String mGithubUrl = "https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc";
     private static final int REPO_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        ListView mRepoListView = (ListView) findViewById(R.id.reposListView);
+        initialize();
+
+    }
+
+    private void initialize()
+    {
+        mRecyclerView = (RecyclerView) findViewById(R.id.repos_recycler_view);
+        mRepos = new ArrayList<>();
+        mRepoAdapter = new RepoAdapter(this, mRepos);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        // Adds the scroll listener to RecyclerView
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            // for this tutorial, this is the ONLY method that we need, ignore the rest
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0)
+                {
+
+                    if (!recyclerView.canScrollVertically(RecyclerView.FOCUS_DOWN)) {
+
+
+                        loadNextDataFromApi();
+
+                    }
+                }
+
+                if (dy < 0) {
+
+
+                    if (!recyclerView.canScrollVertically(-1)) {
+
+
+                        loadPreviousDataFromApi();
+
+                    }
+                }
+
+            }
+        });
+
+        mRecyclerView.setAdapter(mRepoAdapter);
+
+
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        mRepoListView.setEmptyView(mEmptyStateTextView);
-
-        // Create a new adapter that takes an empty list of repos as input
-        mRepoAdapter = new RepoAdapter(this, new ArrayList<Repo>());
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
-        mRepoListView.setAdapter(mRepoAdapter);
-
         mLoadingIndicator = findViewById(R.id.loading_indicator);
         mLoadingIndicator.setVisibility(View.VISIBLE);
 
@@ -63,12 +108,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (networkInfo != null && networkInfo.isConnected())
         {
             // Get a reference to the LoaderManager, in order to interact with loaders.
-            LoaderManager loaderManager = getLoaderManager();
+            mLoaderManager = getLoaderManager();
 
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(REPO_LOADER_ID, null, this);
+            mLoaderManager.initLoader(REPO_LOADER_ID, null, this);
 
 
         } else {
@@ -80,17 +125,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             // Update empty state with no connection error message
             mEmptyStateTextView.setText(R.string.no_internet_connection);
         }
-
     }
-
 
     @Override
     public Loader<List<Repo>> onCreateLoader(int i, Bundle bundle)
     {
 
-        Uri baseUri = Uri.parse(MY_URL_STRING);
+        Uri baseUri = Uri.parse(mGithubUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
-
         return new RepoLoader(this, uriBuilder.toString());
     }
 
@@ -108,14 +150,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mEmptyStateTextView.setText(R.string.no_repos);
 
 
-        Log.i(LOG_TAG, "TEST: Calling on LoadFinished()");
-        // Clear the adapter of previous repo data
-        mRepoAdapter.clear();
+
+
 
         // If there is a valid list of {@link Repo}s, then add them to the adapter's
         // data set. This will trigger the ListView to update.
         if (repos != null && !repos.isEmpty())
         {
+
             mRepoAdapter.addAll(repos);
         }
     }
@@ -124,12 +166,37 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<List<Repo>> loader)
     {
 
-
-        // Loader reset, so we can clear out our existing data.
-        mRepoAdapter.clear();
     }
 
 
+    public void loadNextDataFromApi() {
 
+
+        mGithubUrl = "https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc";
+        mGithubUrl+="&page=" + (++mPage);
+
+
+        mLoaderManager.restartLoader(REPO_LOADER_ID, null, this);
+
+
+
+    }
+
+    public void loadPreviousDataFromApi() {
+
+
+        mGithubUrl = "https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc";
+        String suffix="";
+
+        if(mPage >1)
+            suffix="&page=" + (--mPage);
+
+        mGithubUrl+=suffix;
+
+        mLoaderManager.restartLoader(REPO_LOADER_ID, null, this);
+
+
+
+    }
 
 }

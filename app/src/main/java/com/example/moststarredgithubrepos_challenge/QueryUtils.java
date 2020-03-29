@@ -60,25 +60,25 @@ public final class QueryUtils {
             JSONObject baseJsonResponse = new JSONObject(RepoJSON);
 
 
-                ///////////////////
-                JSONArray itemsArray =  baseJsonResponse.getJSONArray("items");
-                for(int i=0; i <itemsArray.length(); i++)
-                {
-                   JSONObject repoItem = itemsArray.getJSONObject(i);
+            ///////////////////
+            JSONArray itemsArray =  baseJsonResponse.getJSONArray("items");
+            for(int i=0; i <itemsArray.length(); i++)
+            {
+                JSONObject repoItem = itemsArray.getJSONObject(i);
 
-                   String repoName = repoItem.getString("name");
-                   String repoDescription = repoItem.getString("description");
-                   int stargazersCount = repoItem.getInt("stargazers_count");
+                String repoName = repoItem.getString("name");
+                String repoDescription = repoItem.getString("description");
+                int stargazersCount = repoItem.getInt("stargazers_count");
 
-                    JSONObject owner = repoItem.getJSONObject("owner");
-                    String repoOwnerName = owner.getString("login");
-                    String avatarUrl = owner.getString("avatar_url");
+                JSONObject owner = repoItem.getJSONObject("owner");
+                String repoOwnerName = owner.getString("login");
+                String avatarUrl = owner.getString("avatar_url");
 
-                    //creating a repo object with the specific attributes
-                    Repo repo = new Repo(repoName, repoDescription, repoOwnerName, stargazersCount, avatarUrl);
-                    //then add it to our repos list
-                    repos.add(repo);
-                }
+                //creating a repo object with the specific attributes
+                Repo repo = new Repo(repoName, repoDescription, repoOwnerName, stargazersCount, avatarUrl);
+                //then add it to our repos list
+                repos.add(repo);
+            }
 
 
         } catch (JSONException e) {

@@ -9,10 +9,10 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/reposListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/repos_recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         />
 
     <TextView

@@ -1,8 +1,11 @@
 package com.example.moststarredgithubrepos_challenge;
 
 
-import android.content.Context;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,65 +13,80 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepoAdapter extends ArrayAdapter<Repo>{
+public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.ViewHolder> {
 
     private Context mContext;
     private List<Repo> mRepoList = new ArrayList<>();
 
-    public RepoAdapter(@NonNull Context context, ArrayList<Repo> list)
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView repoName, repoDescription;
+        ImageView avatarImage;
+        TextView repoStarsNumber;
+        TextView owenerNameTextView;
+        public ViewHolder(View itemView)
+        {
+
+            super(itemView);
+
+            repoName = (TextView) itemView.findViewById(R.id.repo_name);
+
+            repoDescription = (TextView) itemView.findViewById(R.id.repo_description);
+
+            avatarImage = (ImageView) itemView.findViewById(R.id.owner_avatar_image);
+
+            repoStarsNumber =(TextView) itemView.findViewById(R.id.repo_stargazers);
+
+            owenerNameTextView = (TextView) itemView.findViewById(R.id.owner_name);
+
+        }
+    }
+
+    public RepoAdapter(Context context, List<Repo> reposList )
     {
-        super(context, 0 , list);
-        mContext = context;
-        mRepoList = list;
+        mContext=context;
+        mRepoList = reposList;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View listItem = convertView;
-        if(listItem == null)
-            listItem = LayoutInflater.from(mContext).inflate(R.layout.item_repo,parent,false);
+        Log.i("AEW", "Voila_9999");
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_repo, parent, false);
 
-        //get the current repo on the listview
-        Repo currentRepo =  mRepoList.get(position);
+        return new ViewHolder(view);
+    }
 
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position)
+    {
 
+        Repo currentRepo = mRepoList.get(position);
+        holder.repoName.setText(currentRepo.getRepoName());
+        holder.repoDescription.setText(currentRepo.getRepoDescription());
+        holder.repoStarsNumber.setText(currentRepo.getStargazersCount()+"");
+        holder.owenerNameTextView.setText(currentRepo.getRepoOwnerName());
 
-        TextView name = (TextView) listItem.findViewById(R.id.repo_name);
-        name.setText(currentRepo.getRepoName());
-
-        TextView repoDescription = (TextView) listItem.findViewById(R.id.repo_description);
-        repoDescription.setText(currentRepo.getRepoDescription());
-
-        ImageView avatarImage = listItem.findViewById(R.id.owner_avatar_image);
-
-        TextView repoStarsNumber =(TextView) listItem.findViewById(R.id.repo_stargazers);
-        repoStarsNumber.setText(currentRepo.getStargazersCount()+"");
-
-        TextView owenerNameTextView = (TextView)  listItem.findViewById(R.id.owner_name);
-        owenerNameTextView.setText(currentRepo.getRepoOwnerName());
 
         //a task to load avatar image of the owner
-        new DownloadImageTask(avatarImage)
+        new DownloadImageTask(holder.avatarImage)
                 .execute(currentRepo.getOwnerAvatarUrl());
 
-        return listItem;
+
+    }
+
+
+    @Override
+    public int getItemCount()
+    {
+        return mRepoList.size();
     }
 
 
@@ -98,6 +116,13 @@ public class RepoAdapter extends ArrayAdapter<Repo>{
         {
             bmImage.setImageBitmap(result);
         }
+    }
+
+
+    public void addAll(List<Repo> repoList )
+    {
+        mRepoList = repoList;
+        this.notifyDataSetChanged();
     }
 
 }
